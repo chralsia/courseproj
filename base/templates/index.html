@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block extrahead %}
 <style>
@@ -7,34 +8,28 @@
         margin-right: 15%;
         margin-top: 5%;
     }
+    .formules-block {
+        margin-top: 10%;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div style="margin-top: 6%;">
-    {{val | safe}}
-</div>
 <div class="main-block">
-<table class="table">
-    <thead>
-        <th>Слово</th>
-        <th>Тэг</th>
-        <th>Нач. форма</th>
-        <th>Вероятность</th>
-        <th>Источник</th>
-    </thead>
-    <tbody>
-        {% for i in data %}
-        <tr>
-            <td>{{i.data.word}}</td>
-            <td>{{i.tag}}</td>
-            <td>{{i.data.normal_form}}</td>
-            <td>{{i.data.score}}</td>
-            <td>{{i.mth}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<form class="form-horizonatal" method="post" action="/" role="form">
+  {% csrf_token %}
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+    <div class="input-group">
+      <div class="input-group-addon">$:</div>
+      {% render_field expr_form.expression class+="form-control" placeholder="Expression..." %}
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" style="float: right;">Go!</button>
+</form>
+    <div class="formules-block" lang="latex">
+        {{ data }}
+    </div>
 </div>
 {% endblock %}

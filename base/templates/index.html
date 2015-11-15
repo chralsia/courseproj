@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<style>
+    .main-block {
+        margin-left: 15%;
+        margin-right: 15%;
+        margin-top: 5%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div style="margin-top: 6%;">
+    {{val | safe}}
+</div>
+<div class="main-block">
+<table class="table">
+    <thead>
+        <th>Слово</th>
+        <th>Тэг</th>
+        <th>Нач. форма</th>
+        <th>Вероятность</th>
+        <th>Источник</th>
+    </thead>
+    <tbody>
+        {% for i in data %}
+        <tr>
+            <td>{{i.data.word}}</td>
+            <td>{{i.tag}}</td>
+            <td>{{i.data.normal_form}}</td>
+            <td>{{i.data.score}}</td>
+            <td>{{i.mth}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

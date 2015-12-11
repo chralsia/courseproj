@@ -28,8 +28,8 @@
   </div>
   <button type="submit" class="btn btn-primary" style="float: right;">Go!</button>
 </form>
-    <div class="formules-block" lang="latex">
-        {{ data }}
+    <div class="formules-block">
+        {{ data | safe }}
     </div>
 </div>
 {% endblock %}

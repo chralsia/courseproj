@@ -17,17 +17,23 @@
 {% block content %}
 
 <div class="main-block">
-<form class="form-horizonatal" method="post" action="/" role="form">
-  {% csrf_token %}
-  <div class="form-group">
-    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-    <div class="input-group">
-      <div class="input-group-addon">$:</div>
-      {% render_field expr_form.expression class+="form-control" placeholder="Expression..." %}
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary" style="float: right;">Go!</button>
-</form>
+    <form class="form-horizonatal" method="post" action="/" role="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+            <div class="input-group">
+              <div class="input-group-addon">$:</div>
+              {% render_field expr_form.expression class+="form-control" placeholder="Expression..." %}
+            </div>
+            </div>
+        <div class="input-group" style="float: left;">
+            <span class="input-group-addon" id="basic-addon1">From</span>
+            {% render_field expr_form.from_ class+="form-control" placeholder="0" aria-describedby="basic-addon1" %}
+            <span class="input-group-addon" id="basic-addon2">To</span>
+            {% render_field expr_form.to_ class+="form-control" placeholder="1" aria-describedby="basic-addon1" %}
+        </div>
+        <button type="submit" class="btn btn-primary" style="float: right; margin-top: 2%">Go!</button>
+    </form>
     <div class="formules-block">
         {{ data | safe }}
     </div>

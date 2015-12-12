@@ -17,6 +17,9 @@
 {% block content %}
 
 <div class="main-block">
+    <div class="help">
+        {{ help | safe }}
+    </div>
     <form class="form-horizonatal" method="post" action="/" role="form">
         {% csrf_token %}
         <div class="form-group">
@@ -34,8 +37,27 @@
         </div>
         <button type="submit" class="btn btn-primary" style="float: right; margin-top: 2%">Go!</button>
     </form>
+    <br><br>
     <div class="formules-block">
         {{ data | safe }}
+        <br><br>
+    <table class="table">
+    <thead>
+        <th>Метод</th>
+        <th>Решение</th>
+        <th>Время</th>
+    </thead>
+    <tbody>
+        {% for i in solves %}
+        <tr>
+            <td>{{i.h}}</td>
+            <td>{{i.x}}</td>
+            <td>{{i.s}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
     </div>
+
 </div>
 {% endblock %}

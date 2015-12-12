@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import re
 import sys
 import math
+import time
 
 from django.template import RequestContext
 from django.core.exceptions import ValidationError
@@ -56,6 +58,13 @@ class MathComputer:
         else:
             return False
 
+    @staticmethod
+    def timeit(f):
+        start = time.time()
+        res = f()
+        finish = time.time()
+        return res, float(finish - start)
+
     def newton(self):
         if self.checkConditions(self.x0, self.f, self.parsedf):
             tmpx0 = self.x0
@@ -67,6 +76,7 @@ class MathComputer:
             return x1
         else:
             print "It isn't solving in this interval"
+            return 'NO_SOLUTION_HERE'
 
     def tangent(self):
         if self.checkConditions(self.x0, self.f, self.parsedf):
@@ -80,6 +90,7 @@ class MathComputer:
             return x1
         else:
             print "It isn't solving in this interval"
+            return 'NO_SOLUTION_HERE'
 
     def secant(self):
         if self.checkConditions(self.x0, self.f, self.parsedf):
@@ -94,6 +105,7 @@ class MathComputer:
             return x2
         else:
             print "It isn't solving in this interval"
+            return 'NO_SOLUTION_HERE'
 
     def chords(self):
         if self.checkConditions(self.x0, self.f, self.parsedf):
@@ -106,9 +118,28 @@ class MathComputer:
             return x2
         else:
             print "It isn't solving in this interval"
+            return 'NO_SOLUTION_HERE'
 
-    def latex_print(expr):
-        return latex(parse_expr(expr), mode='equation', itex=True)
+    @staticmethod
+    def latex_print(expr, mode='equation'):
+        if mode:
+            return latex(parse_expr(expr), mode=mode, itex=True)
+        else:
+            return latex(parse_expr(expr), itex=True)
+
+# List of help exprs: first for latex, second - real code
+expressions = [
+    ['x**2'],
+    ['sqrt(x)'],
+    ['sin(x)'],
+    ['exp(x)'],
+    ['Derivative(x)', 'diff(x)'],
+    ['Integral(x)', 'integrate(x)']
+]
+help_ = ''
+for i in expressions:
+    t = len(i) - 1
+    help_ += '$$' + MathComputer.latex_print(i[0], mode=None) + ' = ' + i[t] + '$$'
 
 
 def main(request):
@@ -117,6 +148,7 @@ def main(request):
     context_instance.push({
                 'form': SearchForm(),
                 'menu': 'main',
+                'help': help_,
                 'expr_form': ExpressionForm(),
             })
     if request.method == 'POST':
@@ -126,11 +158,25 @@ def main(request):
             from_ = form.cleaned_data['from_']
             to_ = form.cleaned_data['to_']
             computer = MathComputer(expr, from_, to_)
-            computer.newton()
-            computer.tangent()
-            computer.secant()
-            computer.chords()
             add_context['data'] = MathComputer.latex_print(expr)
+            new, t_new = MathComputer.timeit(computer.newton)
+            tan, t_tan = MathComputer.timeit(computer.tangent)
+            sec_, t_sec = MathComputer.timeit(computer.secant)
+            ch, t_ch = MathComputer.timeit(computer.chords)
+            add_context['solves'] = [
+                {'h': u'Метод Ньютона',
+                 'x': str(new),
+                 's': str(t_new) + u' сек'},
+                {'h': u'Метод касательных: ',
+                 'x': str(tan),
+                 's': str(t_tan) + u' сек'},
+                {'h': u'Метод секущих: ',
+                 'x': str(sec_),
+                 's': str(t_sec) + u' сек'},
+                {'h': u'Метод хорд: ',
+                 'x': str(ch),
+                 's': str(t_ch) + u' сек'}
+            ]
         else:
             raise ValidationError('Illegal data')
     return render_to_response('index.html', add_context, context_instance)
